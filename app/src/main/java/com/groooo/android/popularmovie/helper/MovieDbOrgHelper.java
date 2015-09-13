@@ -16,12 +16,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Vector;
 
-public class MovieApi {
-    private static final String LOG_TAG = MovieApi.class.getSimpleName();
+public class MovieDbOrgHelper {
+    private static final String LOG_TAG = MovieDbOrgHelper.class.getSimpleName();
 
     private static final Uri IMAGE_BASE_URI = Uri.parse("http://image.tmdb.org/t/p");
     private static final String IMG_SIZE_POSTER = "w185";
@@ -29,18 +27,20 @@ public class MovieApi {
 
     private static final String MOVIE_API_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
     private static final String API_KEY = "api_key";
-    private static final String API_KEY_VALUE = "[Need your key right here]";
+    private static final String API_KEY_VALUE = "97bd78bb6d59be9b198e0265fb7af9ca";
     private static final String SORT_BY = "sort_by";
     private static final String SORT_BY_DEFAULT = "popularity.desc";
 
-    private static final String JSON_RESULTS = "results";
-    private static final String JSON_ITEM_ID = "id";
-    private static final String JSON_TITLE = "title";
-    private static final String JSON_OVERVIEW = "overview";
-    private static final String JSON_RELEASE_DATE = "release_date";
-    private static final String JSON_POPULARITY = "popularity";
-    private static final String JSON_VOTE_AVERAGE = "vote_average";
-    private static final String JSON_POSTER_PATH = "poster_path";
+    public static final String JSON_RESULTS = "results";
+    public static final String JSON_ITEM_ID = "id";
+    public static final String JSON_TITLE = "title";
+    public static final String JSON_OVERVIEW = "overview";
+    public static final String JSON_RELEASE_DATE = "release_date";
+    public static final String JSON_POPULARITY = "popularity";
+    public static final String JSON_VOTE_AVERAGE = "vote_average";
+    public static final String JSON_POSTER_PATH = "poster_path";
+
+    public static final String SOURCE_DATE_FORMAT = "yyyy-mm-dd";
 
     public static String getJsonString(String sort) {
         HttpURLConnection urlConnection = null;
@@ -94,9 +94,8 @@ public class MovieApi {
         return  jsonString;
     }
 
-    public static ContentValues[] parseMoviesValue(String jsonString){
-        Vector<ContentValues> cvValues = null;
-        SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-mm-dd");
+    public static ContentValues[] parseMoviesValue(String jsonString) {
+        Vector<ContentValues> cvValues = new Vector<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             JSONArray moviesList = jsonObject.getJSONArray(JSON_RESULTS);
@@ -109,7 +108,7 @@ public class MovieApi {
                 cv.put(MovieContract.MovieEntry.COLUMN_ITEM_ID, movieObj.getString(JSON_ITEM_ID));
                 cv.put(MovieContract.MovieEntry.COLUMN_TITLE, movieObj.getString(JSON_TITLE));
                 cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieObj.getString(JSON_OVERVIEW));
-                cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, dateFmt.parse(movieObj.getString(JSON_RELEASE_DATE)).getTime());
+                cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, Utility.dateToMilliseconds(SOURCE_DATE_FORMAT, movieObj.getString(JSON_RELEASE_DATE)));
                 cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieObj.getString(JSON_VOTE_AVERAGE));
                 cv.put(MovieContract.MovieEntry.COLUMN_POPULARITY, movieObj.getString(JSON_POPULARITY));
                 cv.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movieObj.getString(JSON_POSTER_PATH));
@@ -117,8 +116,6 @@ public class MovieApi {
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error parsing JSON", e);
-        } catch (ParseException e) {
-            Log.e(LOG_TAG, "Error parsing released date", e);
         }
         return cvValues.toArray(new ContentValues[cvValues.size()]);
     }

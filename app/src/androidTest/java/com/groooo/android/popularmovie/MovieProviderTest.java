@@ -58,7 +58,7 @@ public class MovieProviderTest extends ProviderTestCase2<MovieProvider> {
         int count = getProvider().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, testValues);
         assertEquals("In should insert 2 rows.", count, 2);
 
-        Cursor cursor = getProvider().query(MovieContract.MovieEntry.buildMoviesOrderByMostPopular(),
+        Cursor cursor = getProvider().query(MovieContract.MovieEntry.CONTENT_URI,
                 null, null, null, null);
         assertTrue(cursor.moveToFirst());
         assertTrue(cursor.moveToNext());

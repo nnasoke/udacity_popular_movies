@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.groooo.android.popularmovie.R;
 import com.groooo.android.popularmovie.data.MovieContract;
-import com.groooo.android.popularmovie.helper.MovieApi;
+import com.groooo.android.popularmovie.helper.MovieDbOrgHelper;
 import com.groooo.android.popularmovie.helper.Utility;
 import com.squareup.picasso.Picasso;
 
@@ -77,12 +77,12 @@ public class MovieDetailFragment extends Fragment
         final String overview = cursor.getString(CINDX_OVERVIEW);
         final long date = cursor.getLong(CINDX_RELEASE_DATE);
         final double rating = cursor.getDouble(CINDX_VOTE_AVERAGE);
-        final Uri poster = MovieApi.getPosterImageUri(cursor.getString(CINDX_POSTER_PATH));
+        final Uri poster = MovieDbOrgHelper.getPosterImageUri(cursor.getString(CINDX_POSTER_PATH));
 
         ViewHolder viewHolder = (ViewHolder) getView().getTag();
-        viewHolder.tvTitle.setText(Utility.textAsSmoothAsSilk(title));
-        viewHolder.tvOverview.setText(Utility.textAsSmoothAsSilk(overview));
-        viewHolder.tvReleaseDate.setText(Utility.toBasicDateFormat(dateFormat, date));
+        viewHolder.tvTitle.setText(Utility.textToSmoothDisplay(title));
+        viewHolder.tvOverview.setText(Utility.textToSmoothDisplay(overview));
+        viewHolder.tvReleaseDate.setText(Utility.timestampToBasicFormat(dateFormat, date));
         viewHolder.tvUserRating.setText(String.format("Rating: %s/10", Double.toString(rating)));
         Picasso.with(getActivity()).load(poster).into(viewHolder.ivPoster);
     }

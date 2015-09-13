@@ -44,19 +44,5 @@ public class MovieContract {
         public static long getMoviesIdFromUri(Uri uri) {
             return ContentUris.parseId(uri);
         }
-
-        public static Uri buildMoviesOrderByMostPopular() {
-            return BASE_CONTENT_URI.buildUpon()
-                    .appendPath(PATH_MOST_POPULAR)
-                    .appendPath(PATH_MOVIES)
-                    .build();
-        }
-
-        public static Uri buildMoviesOrderByHighestRate() {
-            return BASE_CONTENT_URI.buildUpon()
-                    .appendPath(PATH_HIGHEST_RATE)
-                    .appendPath(PATH_MOVIES)
-                    .build();
-        }
     }
 }

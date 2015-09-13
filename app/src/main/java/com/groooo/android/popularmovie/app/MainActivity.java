@@ -17,8 +17,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mSortBy = Utility.getSharedPreferenceSortOrder(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -32,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateMoviesList(false);
+        updateMoviesList();
     }
 
     @Override
@@ -50,16 +48,21 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.action_refresh) {
-            updateMoviesList(true);
+            // force to pull data anyway.
+            mSortBy = null;
+            updateMoviesList();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateMoviesList(boolean force) {
-        final String sortBy = Utility.getSharedPreferenceSortOrder(this);
-        if (force || !sortBy.equals(mSortBy)) {
+    private void updateMoviesList() {
+        final String sortOrder = Utility.getSharedPreferenceSortOrder(this);
+        if (sortOrder != null && !sortOrder.equals(mSortBy)) {
             MovieFragment fragment = (MovieFragment)getSupportFragmentManager().findFragmentByTag(TAG_MOVIES_FRAGMENT);
-            fragment.onSortChange(sortBy);
+            if (fragment != null) {
+                fragment.onSortChange();
+            }
+            mSortBy = sortOrder;
         }
     }
 }

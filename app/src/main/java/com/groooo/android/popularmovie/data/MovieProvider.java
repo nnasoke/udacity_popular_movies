@@ -16,10 +16,8 @@ public class MovieProvider extends ContentProvider {
 
     private MovieDbOpenHelper mOpenDbHelper;
 
-    private static final int MOVIES = 99;
-    private static final int MOVIES_MOST_POPULAR = 100;
-    private static final int MOVIES_HIGHEST_RATE = 200;
-    private static final int MOVIE_ITEM = 300;
+    private static final int MOVIES = 100;
+    private static final int MOVIE_ITEM = 200;
 
     @Override
     public boolean onCreate() {
@@ -30,33 +28,33 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final int match = sUriMatcher.match(uri);
-        Cursor cursor = null;
-
         switch (match) {
-            case MOVIES_MOST_POPULAR:
-                cursor = queryMostPopularMovies(projection, selection, selectionArgs);
-                break;
-            case MOVIES_HIGHEST_RATE:
-                cursor = queryHighestRateMovies(projection, selection, selectionArgs);
-                break;
+            case MOVIES:
+                return mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
             case MOVIE_ITEM:
-                cursor = getSingleMovie(uri, projection);
-                break;
+                return getSingleMovie(uri, projection);
             default:
                 throw new UnsupportedOperationException("Can not find Uri " + uri.toString());
         }
-        return cursor;
     }
 
     @Override
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
-        String type = null;
-        if (match == MOVIES)
-            type = MovieContract.MovieEntry.CONTENT_TYPE;
-        else
-            throw new UnsupportedOperationException("Can not find Uri " + uri.toString());
-        return type;
+        switch (match) {
+            case MOVIES:
+                return MovieContract.MovieEntry.CONTENT_TYPE;
+            case MOVIE_ITEM:
+                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new UnsupportedOperationException("Can not find Uri " + uri.toString());
+        }
     }
 
     @Override
@@ -163,6 +161,7 @@ public class MovieProvider extends ContentProvider {
             }
             finally {
                 db.endTransaction();
+                db.close();
             }
         } else {
             throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -182,14 +181,7 @@ public class MovieProvider extends ContentProvider {
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String pathSortByMostPopular = String.format("%s/%s",
-                MovieContract.PATH_MOST_POPULAR, MovieContract.PATH_MOVIES);
-        final String pathSortByHighestRate = String.format("%s/%s",
-                MovieContract.PATH_HIGHEST_RATE, MovieContract.PATH_MOVIES);
-
         matcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIES, MovieProvider.MOVIES);
-        matcher.addURI(MovieContract.CONTENT_AUTHORITY, pathSortByHighestRate, MovieProvider.MOVIES_HIGHEST_RATE);
-        matcher.addURI(MovieContract.CONTENT_AUTHORITY, pathSortByMostPopular, MovieProvider.MOVIES_MOST_POPULAR);
         matcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIES + "/#", MovieProvider.MOVIE_ITEM);
         return matcher;
     }
@@ -200,29 +192,8 @@ public class MovieProvider extends ContentProvider {
                 Long.toString(MovieContract.MovieEntry.getMoviesIdFromUri(uri))
         };
         return mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
-                projection, test,
+                projection,
+                test,
                 testValues, null, null, null);
-    }
-
-    private Cursor queryHighestRateMovies(String[] projection, String selection, String[] selectionArgs) {
-        final String sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
-        return mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder);
-    }
-
-    private Cursor queryMostPopularMovies(String[] projection, String selection, String[] selectionArgs) {
-        final String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
-        return mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder);
     }
 }

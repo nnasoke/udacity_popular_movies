@@ -11,7 +11,8 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.groooo.android.popularmovie.R;
-import com.groooo.android.popularmovie.helper.MovieApi;
+import com.groooo.android.popularmovie.data.MovieContract;
+import com.groooo.android.popularmovie.helper.MovieDbOrgHelper;
 import com.squareup.picasso.Picasso;
 
 public class MoviePosterAdapter extends CursorAdapter {
@@ -29,8 +30,8 @@ public class MoviePosterAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        final String imgPath = cursor.getString(cursor.getColumnIndex("poster_path"));
-        final Uri imgUri = MovieApi.getPosterImageUri(imgPath);
+        final String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH));
+        final Uri imgUri = MovieDbOrgHelper.getPosterImageUri(posterPath);
         ViewHolder viewHolder = (ViewHolder)view.getTag();
         Picasso.with(context).load(imgUri).into(viewHolder.imageView);
     }
