@@ -27,7 +27,7 @@ public class MovieDbOrgHelper {
 
     private static final String MOVIE_API_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
     private static final String API_KEY = "api_key";
-    private static final String API_KEY_VALUE = "97bd78bb6d59be9b198e0265fb7af9ca";
+    private static final String API_KEY_VALUE = "[Your API Key]";
     private static final String SORT_BY = "sort_by";
     private static final String SORT_BY_DEFAULT = "popularity.desc";
 
