@@ -54,10 +54,8 @@ public class MovieFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Cursor cursor = getActivity().getContentResolver()
-                .query(MovieContract.MovieEntry.CONTENT_URI,
-                        SELECT_COLUMNS, null, null, getSortOrderString());
-        mAdapter = new MoviePosterAdapter(getActivity(), cursor, 0);
+        // Create default adapter without cursor.
+        mAdapter = new MoviePosterAdapter(getActivity(), null, 0);
 
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
         GridView gv = (GridView)view.findViewById(R.id.movies_gridview);

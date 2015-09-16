@@ -28,20 +28,23 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final int match = sUriMatcher.match(uri);
+        Cursor cursor = null;
         switch (match) {
             case MOVIES:
-                return mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
+                cursor = mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
                         null,
                         null,
                         sortOrder);
+                break;
             case MOVIE_ITEM:
-                return getSingleMovie(uri, projection);
-            default:
-                throw new UnsupportedOperationException("Can not find Uri " + uri.toString());
+                cursor = getSingleMovie(uri, projection);
         }
+        if (cursor != null)
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Override
