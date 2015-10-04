@@ -6,26 +6,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
 
-import com.groooo.android.popularmovie.data.MovieContract;
-import com.groooo.android.popularmovie.data.MovieDbOpenHelper;
-import com.groooo.android.popularmovie.data.MovieProvider;
+import com.groooo.android.popularmovie.helper.MdbContract;
+import com.groooo.android.popularmovie.helper.MdbSQLiteHelper;
+import com.groooo.android.popularmovie.helper.MdbContentProvider;
 
 
-public class MovieProviderTest extends ProviderTestCase2<MovieProvider> {
+public class MovieProviderTest extends ProviderTestCase2<MdbContentProvider> {
 
     public MovieProviderTest() {
-        super(MovieProvider.class, MovieContract.CONTENT_AUTHORITY);
+        super(MdbContentProvider.class, MdbContract.CONTENT_AUTHORITY);
     }
 
     public void testBasicCRUD() {
-        Uri referenceUri = MovieContract.MovieEntry.CONTENT_URI;
-        MovieProvider provider = getProvider();
+        Uri referenceUri = MdbContract.MovieEntry.CONTENT_URI;
+        MdbContentProvider provider = getProvider();
 
         ContentValues insertValues = TestUtilities.createSampleMovie();
 
         // Test on if data is inserted.
         Uri insertUri = provider.insert(referenceUri, insertValues);
-        long movieId = MovieContract.MovieEntry.getMoviesIdFromUri(insertUri);
+        long movieId = MdbContract.MovieEntry.getMoviesIdFromUri(insertUri);
         assertTrue("It should be able to insert data.", movieId != -1);
 
         // Test on if data is existed in table.
@@ -37,10 +37,10 @@ public class MovieProviderTest extends ProviderTestCase2<MovieProvider> {
         assertFalse("It should return only one row.", cursor.moveToNext());
 
         ContentValues updateValues = new ContentValues(insertValues);
-        updateValues.put(MovieContract.MovieEntry.COLUMN_ITEM_ID, movieId);
-        updateValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Hey, I'm changed");
+        updateValues.put(MdbContract.MovieEntry.COLUMN_ITEM_ID, movieId);
+        updateValues.put(MdbContract.MovieEntry.COLUMN_TITLE, "Hey, I'm changed");
         int count = provider.update(insertUri, updateValues,
-                MovieContract.MovieEntry._ID + "=?",
+                MdbContract.MovieEntry._ID + "=?",
                 new String[] { Long.toString(movieId) });
 
         assertEquals("It should be affected to one row.", count, 1);
@@ -55,10 +55,10 @@ public class MovieProviderTest extends ProviderTestCase2<MovieProvider> {
 
     public void testBulkInsert() {
         ContentValues[] testValues = TestUtilities.createSampleMoviesArray();
-        int count = getProvider().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, testValues);
+        int count = getProvider().bulkInsert(MdbContract.MovieEntry.CONTENT_URI, testValues);
         assertEquals("In should insert 2 rows.", count, 2);
 
-        Cursor cursor = getProvider().query(MovieContract.MovieEntry.CONTENT_URI,
+        Cursor cursor = getProvider().query(MdbContract.MovieEntry.CONTENT_URI,
                 null, null, null, null);
         assertTrue(cursor.moveToFirst());
         assertTrue(cursor.moveToNext());
@@ -66,8 +66,8 @@ public class MovieProviderTest extends ProviderTestCase2<MovieProvider> {
     }
 
     public void testGetType() {
-        String typeStr = getProvider().getType(MovieContract.MovieEntry.CONTENT_URI);
-        assertEquals("It should return MovieContract.MovieEntry.CONTENT_TYPE", typeStr, MovieContract.MovieEntry.CONTENT_TYPE);
+        String typeStr = getProvider().getType(MdbContract.MovieEntry.CONTENT_URI);
+        assertEquals("It should return MdbContract.MovieEntry.CONTENT_TYPE", typeStr, MdbContract.MovieEntry.CONTENT_TYPE);
     }
 
 
@@ -79,15 +79,15 @@ public class MovieProviderTest extends ProviderTestCase2<MovieProvider> {
 
     // A helper method to clean up table before test.
     private void deleteAllRecords() {
-        SQLiteDatabase db = new MovieDbOpenHelper(mContext).getWritableDatabase();
-        db.delete(MovieContract.MovieEntry.TABLE_NAME, null, null);
+        SQLiteDatabase db = new MdbSQLiteHelper(mContext).getWritableDatabase();
+        db.delete(MdbContract.MovieEntry.TABLE_NAME, null, null);
         db.close();
     }
 
     // A helper method to insert a sample row into table.
     private void insertMovieRow() {
-        SQLiteDatabase db = new MovieDbOpenHelper(mContext).getWritableDatabase();
-        db.insert(MovieContract.MovieEntry.TABLE_NAME, null, TestUtilities.createSampleMovie());
+        SQLiteDatabase db = new MdbSQLiteHelper(mContext).getWritableDatabase();
+        db.insert(MdbContract.MovieEntry.TABLE_NAME, null, TestUtilities.createSampleMovie());
         db.close();
     }
 }

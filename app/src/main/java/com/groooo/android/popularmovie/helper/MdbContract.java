@@ -1,11 +1,11 @@
-package com.groooo.android.popularmovie.data;
+package com.groooo.android.popularmovie.helper;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class MovieContract {
+public class MdbContract {
 
     public static final String CONTENT_AUTHORITY = "com.groooo.android.popularmovie";
 

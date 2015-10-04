@@ -1,4 +1,4 @@
-package com.groooo.android.popularmovie.data;
+package com.groooo.android.popularmovie.helper;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -8,20 +8,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-public class MovieProvider extends ContentProvider {
+public class MdbContentProvider extends ContentProvider {
 
-    private static final String LOG_TAG = MovieProvider.class.getSimpleName();
+    private static final String LOG_TAG = MdbContentProvider.class.getSimpleName();
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    private MovieDbOpenHelper mOpenDbHelper;
+    private MdbSQLiteHelper mOpenDbHelper;
 
     private static final int MOVIES = 100;
     private static final int MOVIE_ITEM = 200;
 
     @Override
     public boolean onCreate() {
-        mOpenDbHelper = new MovieDbOpenHelper(getContext());
+        mOpenDbHelper = new MdbSQLiteHelper(getContext());
         return true;
     }
 
@@ -31,7 +31,7 @@ public class MovieProvider extends ContentProvider {
         Cursor cursor = null;
         switch (match) {
             case MOVIES:
-                cursor = mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
+                cursor = mOpenDbHelper.getReadableDatabase().query(MdbContract.MovieEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -52,9 +52,9 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIES:
-                return MovieContract.MovieEntry.CONTENT_TYPE;
+                return MdbContract.MovieEntry.CONTENT_TYPE;
             case MOVIE_ITEM:
-                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+                return MdbContract.MovieEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Can not find Uri " + uri.toString());
         }
@@ -67,12 +67,12 @@ public class MovieProvider extends ContentProvider {
 
         if (match == MOVIES) {
             final SQLiteDatabase db = mOpenDbHelper.getWritableDatabase();
-            final long rowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, contentValues);
+            final long rowId = db.insert(MdbContract.MovieEntry.TABLE_NAME, null, contentValues);
             db.close();
 
             if (rowId != -1) {
-                long itemId = contentValues.getAsLong(MovieContract.MovieEntry.COLUMN_ITEM_ID);
-                returnUri = MovieContract.MovieEntry.buildMoviesUri(itemId);
+                long itemId = contentValues.getAsLong(MdbContract.MovieEntry.COLUMN_ITEM_ID);
+                returnUri = MdbContract.MovieEntry.buildMoviesUri(itemId);
             }
             else {
                 throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -97,12 +97,12 @@ public class MovieProvider extends ContentProvider {
             case MOVIES:
                 // All rows will be deleted if no condition specified.
                 if (selection == null) selection = "1";
-                rowsDeleted = db.delete(MovieContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(MdbContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case MOVIE_ITEM:
-                long movieId = MovieContract.MovieEntry.getMoviesIdFromUri(uri);
-                rowsDeleted = db.delete(MovieContract.MovieEntry.TABLE_NAME,
-                        MovieContract.MovieEntry.COLUMN_ITEM_ID + " = ?",
+                long movieId = MdbContract.MovieEntry.getMoviesIdFromUri(uri);
+                rowsDeleted = db.delete(MdbContract.MovieEntry.TABLE_NAME,
+                        MdbContract.MovieEntry.COLUMN_ITEM_ID + " = ?",
                         new String[] { Long.toString(movieId) });
                 break;
             default:
@@ -124,13 +124,13 @@ public class MovieProvider extends ContentProvider {
 
         switch (match) {
             case MOVIES: // Update all that meet criteria.
-                rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME, contents, selection, selectionArgs);
+                rowsUpdated = db.update(MdbContract.MovieEntry.TABLE_NAME, contents, selection, selectionArgs);
                 break;
             case MOVIE_ITEM: // Update one row that meet movie_id.
-                long movieId = MovieContract.MovieEntry.getMoviesIdFromUri(uri);
-                rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME,
+                long movieId = MdbContract.MovieEntry.getMoviesIdFromUri(uri);
+                rowsUpdated = db.update(MdbContract.MovieEntry.TABLE_NAME,
                         contents,
-                        MovieContract.MovieEntry.COLUMN_ITEM_ID + " = ?",
+                        MdbContract.MovieEntry.COLUMN_ITEM_ID + " = ?",
                         new String[] { Long.toString(movieId) });
                 break;
             default:
@@ -154,7 +154,7 @@ public class MovieProvider extends ContentProvider {
             try {
                 db.beginTransaction();
                 for (ContentValues content : contents) {
-                    if (db.insert(MovieContract.MovieEntry.TABLE_NAME, null, content) != -1) {
+                    if (db.insert(MdbContract.MovieEntry.TABLE_NAME, null, content) != -1) {
                         insertCount++;
                     }
                 }
@@ -184,17 +184,17 @@ public class MovieProvider extends ContentProvider {
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIES, MovieProvider.MOVIES);
-        matcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIES + "/#", MovieProvider.MOVIE_ITEM);
+        matcher.addURI(MdbContract.CONTENT_AUTHORITY, MdbContract.PATH_MOVIES, MdbContentProvider.MOVIES);
+        matcher.addURI(MdbContract.CONTENT_AUTHORITY, MdbContract.PATH_MOVIES + "/#", MdbContentProvider.MOVIE_ITEM);
         return matcher;
     }
 
     private Cursor getSingleMovie(Uri uri, String[] projection) {
-        final String test = MovieContract.MovieEntry.COLUMN_ITEM_ID + "=?";
+        final String test = MdbContract.MovieEntry.COLUMN_ITEM_ID + "=?";
         final String[] testValues = new String[] {
-                Long.toString(MovieContract.MovieEntry.getMoviesIdFromUri(uri))
+                Long.toString(MdbContract.MovieEntry.getMoviesIdFromUri(uri))
         };
-        return mOpenDbHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME,
+        return mOpenDbHelper.getReadableDatabase().query(MdbContract.MovieEntry.TABLE_NAME,
                 projection,
                 test,
                 testValues, null, null, null);

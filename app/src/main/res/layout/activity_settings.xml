@@ -3,5 +3,5 @@
     android:id="@+id/settings_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.groooo.android.popularmovie.app.SettingsActivity"
+    tools:context="com.groooo.android.popularmovie.ui.activity.SettingsActivity"
     tools:ignore="MergeRootFrame"/>

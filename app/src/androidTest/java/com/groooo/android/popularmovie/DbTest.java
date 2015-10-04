@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
-import com.groooo.android.popularmovie.data.MovieContract;
-import com.groooo.android.popularmovie.data.MovieDbOpenHelper;
+import com.groooo.android.popularmovie.helper.MdbContract;
+import com.groooo.android.popularmovie.helper.MdbSQLiteHelper;
 
 import java.util.HashSet;
 
@@ -14,10 +14,10 @@ public class DbTest extends AndroidTestCase {
 
     public void testCreateDb() throws Throwable {
         final HashSet<String> tableHashSet = new HashSet<>();
-        tableHashSet.add(MovieContract.MovieEntry.TABLE_NAME);
+        tableHashSet.add(MdbContract.MovieEntry.TABLE_NAME);
 
-        mContext.deleteDatabase(MovieDbOpenHelper.DATABASE_NAME);
-        SQLiteDatabase db = new MovieDbOpenHelper(mContext).getWritableDatabase();
+        mContext.deleteDatabase(MdbSQLiteHelper.DATABASE_NAME);
+        SQLiteDatabase db = new MdbSQLiteHelper(mContext).getWritableDatabase();
         // test that if table has been created
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
         assertTrue("Error: This means that the database has not been created correctly", c.moveToFirst());
@@ -27,16 +27,16 @@ public class DbTest extends AndroidTestCase {
         assertTrue("Error: Your database was created without movies table", tableHashSet.isEmpty());
 
         // test that if columns have been created correctly
-        c = db.rawQuery("PRAGMA table_info(" + MovieContract.MovieEntry.TABLE_NAME + ")", null);
+        c = db.rawQuery("PRAGMA table_info(" + MdbContract.MovieEntry.TABLE_NAME + ")", null);
         assertTrue("Error: This means that we were unable to query the database for table information.", c.moveToFirst());
 
         final HashSet<String> columnHashSet = new HashSet<>();
-        columnHashSet.add(MovieContract.MovieEntry.COLUMN_TITLE);
-        columnHashSet.add(MovieContract.MovieEntry.COLUMN_OVERVIEW);
-        columnHashSet.add(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
-        columnHashSet.add(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
-        columnHashSet.add(MovieContract.MovieEntry.COLUMN_POPULARITY);
-        columnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
+        columnHashSet.add(MdbContract.MovieEntry.COLUMN_TITLE);
+        columnHashSet.add(MdbContract.MovieEntry.COLUMN_OVERVIEW);
+        columnHashSet.add(MdbContract.MovieEntry.COLUMN_POSTER_PATH);
+        columnHashSet.add(MdbContract.MovieEntry.COLUMN_RELEASE_DATE);
+        columnHashSet.add(MdbContract.MovieEntry.COLUMN_POPULARITY);
+        columnHashSet.add(MdbContract.MovieEntry.COLUMN_VOTE_AVERAGE);
 
         int columnIndex = c.getColumnIndex("name");
         do {
@@ -50,15 +50,15 @@ public class DbTest extends AndroidTestCase {
 
     public void testMoviesTable() throws  Throwable {
         final ContentValues testMovieValues = TestUtilities.createSampleMovie();
-        SQLiteDatabase db = new MovieDbOpenHelper(mContext).getWritableDatabase();
+        SQLiteDatabase db = new MdbSQLiteHelper(mContext).getWritableDatabase();
 
         // test that data can be save.
         long rowNum;
-        rowNum = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testMovieValues);
+        rowNum = db.insert(MdbContract.MovieEntry.TABLE_NAME, null, testMovieValues);
         assertTrue("Error: Unable to save movies data", rowNum != -1);
 
         // test that data can be retrieved
-        Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = db.query(MdbContract.MovieEntry.TABLE_NAME, null, null, null, null, null, null);
         assertTrue("Error: No record returned", cursor.moveToFirst());
 
         // validate cursor's result with the original testing data.

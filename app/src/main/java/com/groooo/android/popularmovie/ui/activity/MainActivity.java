@@ -1,4 +1,4 @@
-package com.groooo.android.popularmovie.app;
+package com.groooo.android.popularmovie.ui.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.groooo.android.popularmovie.R;
+import com.groooo.android.popularmovie.ui.fragment.MovieFragment;
 import com.groooo.android.popularmovie.helper.Utility;
 
 public class MainActivity extends AppCompatActivity {

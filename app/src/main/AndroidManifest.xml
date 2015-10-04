@@ -10,9 +10,9 @@
         android:theme="@style/AppTheme" >
         <provider
             android:authorities="com.groooo.android.popularmovie"
-            android:name=".data.MovieProvider"></provider>
+            android:name=".helper.MdbContentProvider"></provider>
         <activity
-            android:name="com.groooo.android.popularmovie.app.MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,11 +21,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.groooo.android.popularmovie.app.MovieDetailActivity"
+            android:name=".ui.activity.MovieDetailActivity"
             android:label="@string/title_activity_detail" >
         </activity>
         <activity
-            android:name="com.groooo.android.popularmovie.app.SettingsActivity"
+            android:name=".ui.activity.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
     </application>

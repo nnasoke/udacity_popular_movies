@@ -1,18 +1,10 @@
-package com.groooo.android.popularmovie.app;
+package com.groooo.android.popularmovie.ui.activity;
 
-import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
 
 import com.groooo.android.popularmovie.R;
 

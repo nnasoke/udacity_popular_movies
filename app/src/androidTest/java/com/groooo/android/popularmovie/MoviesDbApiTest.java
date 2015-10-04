@@ -2,7 +2,7 @@ package com.groooo.android.popularmovie;
 
 import android.test.AndroidTestCase;
 
-import com.groooo.android.popularmovie.helper.MovieDbOrgHelper;
+import com.groooo.android.popularmovie.helper.MdbHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public class MoviesDbApiTest extends AndroidTestCase {
 
     public void testPullingDataFromMovieDb() throws JSONException {
-        final String jsonStr = MovieDbOrgHelper.getJsonString(mContext.getString(R.string.pref_sort_by_most_popular));
+        final String jsonStr = MdbHelper.getJsonString(mContext.getString(R.string.pref_sort_by_most_popular));
         JSONObject jsonObject = new JSONObject(jsonStr);
         assertEquals(jsonObject.length() > 0, true);
 

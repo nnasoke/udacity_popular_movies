@@ -3,5 +3,5 @@
     android:id="@+id/movies_list_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.groooo.android.popularmovie.app.MainActivity"
+    tools:context="com.groooo.android.popularmovie.ui.activity.MainActivity"
     tools:ignore="MergeRootFrame"/>

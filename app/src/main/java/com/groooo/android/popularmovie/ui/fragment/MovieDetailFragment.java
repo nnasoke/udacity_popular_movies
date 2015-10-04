@@ -1,4 +1,4 @@
-package com.groooo.android.popularmovie.app;
+package com.groooo.android.popularmovie.ui.fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.groooo.android.popularmovie.R;
-import com.groooo.android.popularmovie.data.MovieContract;
-import com.groooo.android.popularmovie.helper.MovieDbOrgHelper;
+import com.groooo.android.popularmovie.helper.MdbHelper;
+import com.groooo.android.popularmovie.helper.MdbContract;
 import com.groooo.android.popularmovie.helper.Utility;
 import com.squareup.picasso.Picasso;
 
@@ -26,13 +26,13 @@ public class MovieDetailFragment extends Fragment
     private static final int LOADER_ID = 9988;
 
     private static final String[] SELECT_COLUMNS = {
-            MovieContract.MovieEntry.COLUMN_ITEM_ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_BACKDROP_PATH
+            MdbContract.MovieEntry.COLUMN_ITEM_ID,
+            MdbContract.MovieEntry.COLUMN_TITLE,
+            MdbContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MdbContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MdbContract.MovieEntry.COLUMN_OVERVIEW,
+            MdbContract.MovieEntry.COLUMN_POSTER_PATH,
+            MdbContract.MovieEntry.COLUMN_BACKDROP_PATH
     };
 
     private static final int CINDX_ITEM_ID = 0;
@@ -77,8 +77,9 @@ public class MovieDetailFragment extends Fragment
         final String overview = cursor.getString(CINDX_OVERVIEW);
         final long date = cursor.getLong(CINDX_RELEASE_DATE);
         final double rating = cursor.getDouble(CINDX_VOTE_AVERAGE);
-        final Uri poster = MovieDbOrgHelper.getPosterImageUri(cursor.getString(CINDX_POSTER_PATH));
+        final Uri poster = MdbHelper.getPosterImageUri(cursor.getString(CINDX_POSTER_PATH));
 
+        getActivity().setTitle(title);
         ViewHolder viewHolder = (ViewHolder) getView().getTag();
         viewHolder.tvTitle.setText(Utility.textToSmoothDisplay(title));
         viewHolder.tvOverview.setText(Utility.textToSmoothDisplay(overview));

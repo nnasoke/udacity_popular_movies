@@ -1,4 +1,4 @@
-package com.groooo.android.popularmovie.app;
+package com.groooo.android.popularmovie.ui.activity;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
